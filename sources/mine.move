@@ -95,6 +95,7 @@ module tik_supply::mine {
           
            if (dynamic_object_field::exists_(&miner.id, ctx.sender()))
            {
+ 
                 let rewardata=Rewardata{
                      id: object::new(ctx),
                      share:share, 
@@ -102,6 +103,7 @@ module tik_supply::mine {
                      eid:epochId,
                      euid:euid,
                 };
+
                 let minerdata_ref : &mut MinerData = dynamic_object_field::borrow_mut(&mut miner.id, ctx.sender());
 
                 assert!(!dynamic_object_field::exists_(&minerdata_ref.id, epochId),ERR_DUPhit);
@@ -172,25 +174,36 @@ module tik_supply::mine {
                 let epid=minerdata_ref.reward_Epochs[counter] ;
                 if ((epid as u128) <=(flag_epoch as u128))
                 {
-                     let mut rewarddata : &mut Rewardata= dynamic_object_field::borrow_mut(&mut minerdata_ref.id, epid);
-                     let unlock=rewarddata.unlock;
-                     if (unlock<=now)
-                     {
-                         let epochdata_reference: &EpochData = dynamic_object_field::borrow(&epochs.id, epid);
-                         let epoch_shares= (epochdata_reference.shares_miners[0] as u128) *DECIMALS;
-                         let share=(rewarddata.share as u128) *DECIMALS;
-                         let rwd=EPOCH_REWARD*share/epoch_shares;
-                         claimable=claimable+rwd ;
-                         vector::remove(&mut  minerdata_ref.reward_Epochs,counter);
-                         let Rewardata{id: ruid, share:_, unlock:_, eid:_,euid:_} =   dynamic_object_field::remove<u64,Rewardata>(&mut  minerdata_ref.id, epid);
-                         object::delete(ruid);
-                         max_process=max_process-1;
-                         if (max_process<=0)
-                         {
-                            counter=0;
-                         }
+                     if (dynamic_object_field::exists_(&mut minerdata_ref.id, epid)){
+                            let mut rewarddata : &mut Rewardata= dynamic_object_field::borrow_mut(&mut minerdata_ref.id, epid);
+                            let unlock=rewarddata.unlock;
+                            if (unlock<=now)
+                            {
+                                let epochdata_reference: &EpochData = dynamic_object_field::borrow(&epochs.id, epid);
+                                let epoch_shares= (epochdata_reference.shares_miners[0] as u128) *DECIMALS;
+                                let share=(rewarddata.share as u128) *DECIMALS;
+                                let rwd=EPOCH_REWARD*share/epoch_shares;
+                                claimable=claimable+rwd ;
+                                vector::remove(&mut  minerdata_ref.reward_Epochs,counter);
+                                let Rewardata{id: ruid, share:_, unlock:_, eid:_,euid:_} =   dynamic_object_field::remove<u64,Rewardata>(&mut  minerdata_ref.id, epid);
+                                object::delete(ruid);
+                                max_process=max_process-1;
+                                if (max_process<=0)
+                                {
+                                    counter=0;
+                                }
 
+                            }
+                     }else
+                     {
+                         vector::remove(&mut  minerdata_ref.reward_Epochs,counter);
+                          max_process=max_process-1;
+                          if (max_process<=0)
+                          {
+                                counter=0;
+                          }
                      }
+                   
                 };
               
                

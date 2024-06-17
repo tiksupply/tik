@@ -24,4 +24,4 @@ Smart Contract
 Tik is powered by [sui](https://sui.io/) - a new, horizontally scalable layer-one chain, promising revolutionary transaction speeds at low cost.  
 
 
-Ready to start mining? Check this out: [https://github.com/tiksupply/tik-cil](https://github.com/tiksupply/tik-cil)
+Ready to start mining? Check this out: [https://github.com/tiksupply/tik-cil](https://github.com/tiksupply/tik-cli)

@@ -174,7 +174,7 @@ module tik_supply::mine {
                 let epid=minerdata_ref.reward_Epochs[counter] ;
                 if ((epid as u128) <=(flag_epoch as u128))
                 {
-                     if (dynamic_object_field::exists_<u64>(&mut minerdata_ref.id, epid)){
+                     if (dynamic_object_field::exists_with_type<u64,Rewardata>(&mut minerdata_ref.id, epid)){
                             let mut rewarddata : &mut Rewardata= dynamic_object_field::borrow_mut(&mut minerdata_ref.id, epid);
                             let unlock=rewarddata.unlock;
                             if (unlock<=now)
